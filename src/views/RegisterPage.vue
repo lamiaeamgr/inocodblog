@@ -3,25 +3,21 @@
     <form class="form" @submit.prevent="handleRegister">
       <InputComponent label="First Name" placeholder="Enter your First Name" v-model="firstName">
         <template #icon>
-          <!-- Optional SVG for Icon -->
         </template>
       </InputComponent>
 
       <InputComponent label="Last Name" placeholder="Enter your Last Name" v-model="lastName">
         <template #icon>
-          <!-- Optional SVG for Icon -->
         </template>
       </InputComponent>
 
       <InputComponent label="Email" placeholder="Enter your Email" v-model="email">
         <template #icon>
-          <!-- Optional SVG for Icon -->
         </template>
       </InputComponent>
 
       <InputComponent label="Password" placeholder="Enter your Password" type="password" v-model="password">
         <template #icon>
-          <!-- Optional SVG for Icon -->
         </template>
       </InputComponent>
 
@@ -62,17 +58,21 @@ export default {
   },
   methods: {
     handleRegister() {
-      // Clear previous messages
       this.errorMessage = '';
       this.successMessage = '';
 
-      // Check if all fields are filled
       if (!this.firstName || !this.lastName || !this.email || !this.password) {
         this.errorMessage = 'Please fill all fields.';
         return;
       }
 
-      // Save the user to local storage
+      const passwordPattern = /^(?=.*[A-Z]).{8,}$/;
+
+      if (!passwordPattern.test(this.password)) {
+        this.errorMessage = 'Password must be at least 8 characters long and include at least one uppercase letter.';
+        return;
+      }
+
       const users = JSON.parse(localStorage.getItem('users')) || [];
       const user = {
         firstName: this.firstName,
@@ -84,10 +84,8 @@ export default {
       users.push(user);
       localStorage.setItem('users', JSON.stringify(users));
 
-      // Show success message
       this.successMessage = 'Successfully registered!';
 
-      // Clear form fields
       this.firstName = '';
       this.lastName = '';
       this.email = '';
