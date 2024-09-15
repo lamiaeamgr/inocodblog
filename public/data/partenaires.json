@@ -1,0 +1,21 @@
+[
+    {
+      "id": 1,
+      "nom": "TechCorp",
+      "logo": "techcorp_logo.png",
+      "site_web": "https://www.techcorp.com"
+    },
+    {
+      "id": 2,
+      "nom": "Innovate Solutions",
+      "logo": "innovate_logo.png",
+      "site_web": "https://www.innovatesolutions.com"
+    },
+    {
+      "id": 3,
+      "nom": "DevPartners",
+      "logo": "devpartners_logo.png",
+      "site_web": "https://www.devpartners.com"
+    }
+  ]
+  

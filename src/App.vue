@@ -1,26 +1,32 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div id="app">
+    <NavbarComponent /> <!-- Your navigation bar component -->
+    <router-view /> <!-- This is where routed components will be rendered -->
+    
+  </div>
+ <FooterComponent />
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import NavbarComponent from './components/NavbarComponent.vue';
+import FooterComponent from './components/FooterComponent.vue'; 
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    NavbarComponent,
+    FooterComponent
   }
 }
 </script>
 
 <style>
+/* Global styles can go here */
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+  margin-top: 15px;
+  font-family: "Bebas Neue", cursive;
+  margin: 15px 0 0 0;
 }
 </style>
+

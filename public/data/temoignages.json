@@ -1,0 +1,23 @@
+[
+  {
+    "id": 1,
+    "nom": "Jean Dupont",
+    "message": "Une expérience incroyable avec cette plateforme. Je recommande vivement!",
+    "date": "2024-09-01",
+    "image": "jean.avif"
+  },
+  {
+    "id": 2,
+    "nom": "Marie Claire",
+    "message": "Le contenu est vraiment pertinent et facile à comprendre. Bravo à toute l'équipe!",
+    "date": "2024-08-15",
+    "image": "marie.avif"
+  },
+  {
+    "id": 3,
+    "nom": "Ahmed El Mansouri",
+    "message": "J'ai beaucoup appris grâce à cette plateforme. Les articles sont clairs et instructifs.",
+    "date": "2024-09-05",
+    "image": "ahmed.avif"
+  }
+]

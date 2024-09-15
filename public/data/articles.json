@@ -1,0 +1,30 @@
+[
+    {
+      "id": 1,
+      "titre": "Les bases du développement web",
+      "resume": "Un article pour débuter dans le développement web.",
+      "contenu": "Le développement web est un domaine vaste. Cet article vous guidera à travers les bases...",
+      "auteur": "Alice Martin",
+      "date_publication": "2024-07-20",
+      "image": "article1.jpg"
+    },
+    {
+      "id": 2,
+      "titre": "Vue.js : Un guide complet",
+      "resume": "Découvrez tout ce qu'il faut savoir pour commencer avec Vue.js.",
+      "contenu": "Vue.js est un framework JavaScript progressif utilisé pour construire des interfaces utilisateurs...",
+      "auteur": "Jean Dupont",
+      "date_publication": "2024-08-10",
+      "image": "article2.png"
+    },
+    {
+      "id": 3,
+      "titre": "Les tendances en développement web en 2024",
+      "resume": "Un aperçu des technologies émergentes en 2024.",
+      "contenu": "Chaque année, de nouvelles tendances émergent dans le développement web. Voici les tendances à suivre en 2024...",
+      "auteur": "Sophie Leclerc",
+      "date_publication": "2024-09-05",
+      "image": "article3.jpg"
+    }
+  ]
+  
