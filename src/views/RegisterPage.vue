@@ -66,7 +66,13 @@ export default {
         return;
       }
 
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       const passwordPattern = /^(?=.*[A-Z]).{8,}$/;
+
+      if (!emailPattern.test(this.email)) {
+        this.errorMessage = 'Please enter a valid email address.';
+        return;
+      }
 
       if (!passwordPattern.test(this.password)) {
         this.errorMessage = 'Password must be at least 8 characters long and include at least one uppercase letter.';
