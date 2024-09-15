@@ -30,7 +30,6 @@
   </nav>
 </template>
 
-
 <script>
 import { mapState, mapActions } from 'vuex';
 
@@ -44,18 +43,22 @@ export default {
   computed: {
     ...mapState(['isLoggedIn']),
   },
- methods: {
-  ...mapActions(['logout']),
-  toggleMenu() {
-    this.isMenuOpen = !this.isMenuOpen;
+  methods: {
+    ...mapActions(['logout']),
+    toggleMenu() {
+      this.isMenuOpen = !this.isMenuOpen;
+    },
+    async handleLogout() {
+      await this.logout();
+      this.$router.push({ name: 'LoginPage' });
+      this.$nextTick(() => this.$forceUpdate()); 
+    },
+
   },
-  handleLogout() {
-    this.logout();
-    this.$router.push({ name: 'LoginPage' });
-  },
-},
 };
 </script>
+
+
 
 <style scoped>
 /* General styles */

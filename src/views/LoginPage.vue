@@ -21,7 +21,7 @@
         <span class="span">Forgot password?</span>
       </div>
 
-      <ButtonComponent>Log In</ButtonComponent>
+      <ButtonComponent @click="handleLogin">Log In</ButtonComponent>
 
       <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
       <p class="p">Don't have an account? <span class="span" @click="redirectToRegister">Sign Up</span></p>
@@ -32,6 +32,7 @@
 <script>
 import InputComponent from '../components/InputComponent.vue';
 import ButtonComponent from '../components/ButtonComponent.vue';
+import { mapActions } from 'vuex';
 
 export default {
   components: {
@@ -47,7 +48,7 @@ export default {
     };
   },
   methods: {
-    handleLogin() {
+    async handleLogin() {
       // Clear previous messages
       this.errorMessage = '';
 
@@ -67,10 +68,17 @@ export default {
         localStorage.setItem('user', JSON.stringify(user));
 
         // Redirect to ArticlesList page
+        
+        await this.login();
         this.$router.push({ name: 'ArticlesList' });
+        this.$nextTick(() => this.$forceUpdate()); 
       } else {
         this.errorMessage = 'Invalid email or password.';
       }
+    },
+    ...mapActions(['login']),
+    toggleMenu() {
+      this.isMenuOpen = !this.isMenuOpen;
     },
     redirectToRegister() {
       // Redirect to the register page
