@@ -12,24 +12,31 @@
       <ArticlesList v-if="articles.length > 0"/>
       <p v-else>Loading articles...</p>
     </section>
-</div>
+
     <section class="testimonials">
-      <!-- Conditional rendering of TestimonialList -->
+      <!-- Conditional rendering of TestimonialsList -->
       <TestimonialsList v-if="testimonials.length > 0"/>
       <p v-else>Loading testimonials...</p>
     </section>
-  
+
+    <section class="partners">
+      <!-- Rendering PartnersList -->
+      <PartnersList />
+    </section>
+  </div>
 </template>
 
 <script>
 import ArticlesList from './ArticlesList.vue'; 
 import TestimonialsList from './TestimonialsList.vue'; 
+import PartnersList from './PartnersList.vue'; // Import the PartnersList component
 
 export default {
   name: 'HomePage',
   components: {
     ArticlesList,
-    TestimonialsList
+    TestimonialsList,
+    PartnersList // Register the PartnersList component
   },
   data() {
     return {
@@ -42,21 +49,20 @@ export default {
     this.fetchTestimonials();
   },
   methods: {
-async fetchArticles() {
-  try {
-    const response = await fetch('http://localhost:3000/api/articles');
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
-    }
-    const data = await response.json();
-    console.log('Fetched articles:', data); 
-    this.articles = data.slice(0, 3); 
-    console.log('Limited articles:', this.articles); 
-  } catch (error) {
-    console.error('Error fetching articles:', error);
-  }
-}
-,
+    async fetchArticles() {
+      try {
+        const response = await fetch('http://localhost:3000/api/articles');
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        console.log('Fetched articles:', data); 
+        this.articles = data.slice(0, 3); 
+        console.log('Limited articles:', this.articles); 
+      } catch (error) {
+        console.error('Error fetching articles:', error);
+      }
+    },
     async fetchTestimonials() {
       try {
         const response = await fetch('http://localhost:3000/api/temoignages'); 
@@ -90,6 +96,7 @@ header {
   background-size: cover;
   background-position: center;
 }
+
 header > div {
   height: 100%;
   width: 100%;
@@ -105,6 +112,10 @@ header > div {
 }
 
 .testimonials {
+  margin-top: 20px;
+}
+
+.partners {
   margin-top: 20px;
 }
 
