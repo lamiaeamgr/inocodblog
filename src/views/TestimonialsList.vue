@@ -1,64 +1,53 @@
 <template>
   <div class="testimonial-list">
-    <h2>Testimonials</h2>
+    <div v-if="loading" class="loading">Loading testimonials...</div>
+    <div v-if="error" class="error">{{ error }}</div>
 
-    <div v-if="loading" class="loading">
-      Loading testimonials...
-    </div>
-
-    <div v-if="error" class="error">
-      {{ error }}
-    </div>
-
-    <div v-if="!loading && testimonials.length"  class="testimonial-parent">
-
-      <transition name="slide-fade" mode="out-in">
-        <div :key="currentTestimonial.id" class="testimonial-box">
-          <div class="testimonial">
-            <i class="fas fa-quote-right"></i>
-            <span class="testimonial-text">{{ currentTestimonial.message }}</span>
-            <div class="testimonial-user">
-              <!-- Correct usage of v-bind for the src attribute -->
-              <img :src="require(`@/assets/${currentTestimonial.image}`)" alt="user-img" class="user-img">
-              <div class="user-info">
-                <span class="user-name">{{ currentTestimonial.nom }}</span>
-                <div class="user-job-details">
-                  <span class="user-job">{{ currentTestimonial.date }}</span>
-                  <!-- Assuming there's no "post" data field, you might want to remove or adapt this part -->
-                  <span class="user-post"></span>
+    <div v-if="!loading && testimonials.length" class="testimonial-parent">
+      <div ref="testimonialContainer" class="testimonial-container">
+        <transition-group name="fade" tag="div">
+          <div
+            v-for="(testimonial, index) in testimonials"
+            :key="testimonial.id"
+            class="testimonial-box"
+            :ref="`testimonialBox${testimonial.id}`"
+            :style="getRandomPositionStyle(index)"
+          >
+            <div class="notification">
+              <div class="notification-header">
+                <img
+                  :src="require(`@/assets/${testimonial.image}`)"
+                  alt="User Image"
+                  class="user-image"
+                />
+                <div class="user-info">
+                  <h3 class="user-name">{{ testimonial.nom }}</h3>
+                  <p class="message-date">{{ formattedDate(testimonial.date) }}</p>
                 </div>
               </div>
+              <p class="message-content">{{ testimonial.message }}</p>
             </div>
           </div>
-        </div>
-      </transition>
-
-      <div class="controls">
-        <Button @click="prevTestimonial">Prev</Button>
-        <button @click="nextTestimonial">Next</button>
+        </transition-group>
       </div>
-
     </div>
-    
   </div>
 </template>
 
 <script>
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+gsap.registerPlugin(ScrollTrigger);
+
 export default {
   name: 'TestimonialList',
   data() {
     return {
       testimonials: [],
-      currentIndex: 0,
       loading: true,
       error: null,
-      slideshowInterval: null,
     };
-  },
-  computed: {
-    currentTestimonial() {
-      return this.testimonials[this.currentIndex];
-    },
   },
   created() {
     this.fetchTestimonials();
@@ -66,188 +55,177 @@ export default {
   methods: {
     async fetchTestimonials() {
       try {
-        const response = await fetch('http://localhost:3000/api/temoignages'); 
+        const response = await fetch('http://localhost:3000/api/temoignages');
         if (!response.ok) {
           throw new Error('Failed to fetch testimonials');
         }
         const data = await response.json();
         this.testimonials = data;
-        this.startSlideshow();
+
+        // Randomize order of testimonials
+        if (this.testimonials.length) {
+          this.testimonials = this.shuffleArray(this.testimonials);
+          this.$nextTick(() => {
+            this.setupScrollTrigger();
+          });
+        }
       } catch (err) {
         this.error = 'Failed to load testimonials. Please try again later.';
+        console.error(err);
       } finally {
         this.loading = false;
       }
     },
-    startSlideshow() {
-      this.slideshowInterval = setInterval(() => {
-        this.nextTestimonial();
-      }, 5000);
+    shuffleArray(array) {
+      return array.sort(() => Math.random() - 0.5);
     },
-    stopSlideshow() {
-      clearInterval(this.slideshowInterval);
+    setupScrollTrigger() {
+      const testimonialsSection = this.$refs.testimonialContainer;
+      gsap.fromTo(
+        testimonialsSection,
+        { opacity: 0, y: 50 },
+        {
+          opacity: 1,
+          y: 0,
+          scrollTrigger: {
+            trigger: testimonialsSection,
+            start: 'top 80%',
+            toggleActions: 'play none none reverse',
+            once: true,
+          },
+        }
+      );
+
+      this.testimonials.forEach((testimonial) => {
+        const testimonialBox = this.$refs[`testimonialBox${testimonial.id}`];
+        if (testimonialBox) {
+          gsap.fromTo(
+            testimonialBox[0],
+            { opacity: 0, y: 50 },
+            {
+              opacity: 1,
+              y: 0,
+              scrollTrigger: {
+                trigger: testimonialBox[0],
+                start: 'top 80%',
+                toggleActions: 'play none none reverse',
+                onEnter: () => this.stopFloatingAnimation(testimonialBox[0]),
+                once: true,
+              },
+            }
+          );
+          this.startFloatingAnimation(testimonialBox[0]); // Start the floating animation before the scroll trigger
+        }
+      });
     },
-    prevTestimonial() {
-      this.currentIndex =
-        this.currentIndex === 0
-          ? this.testimonials.length - 1
-          : this.currentIndex - 1;
+    getRandomPositionStyle(index) {
+      // Random positioning styles
+      const positions = [
+        { left: '0%', top: '10%' },   // Top left
+        { right: '0%', top: '33.5%' },  // Right middle
+        { left: '0%', bottom: '15%' }, // Bottom left
+      ];
+      return {
+        position: 'absolute',
+        ...positions[index % positions.length],
+      };
     },
-    nextTestimonial() {
-      this.currentIndex =
-        this.currentIndex === this.testimonials.length - 1
-          ? 0
-          : this.currentIndex + 1;
+    startFloatingAnimation(el) {
+      gsap.to(el, {
+        y: '+=20', // Float up by 20px
+        duration: 2,
+        repeat: -1,
+        yoyo: true, // Yoyo effect for floating
+        ease: 'power1.inOut',
+      });
     },
-  },
-  beforeUnmount() {
-    this.stopSlideshow();
+    stopFloatingAnimation(el) {
+      gsap.killTweensOf(el); // Stop the floating animation
+    },
+    formattedDate(date) {
+      return new Date(date).toLocaleDateString('fr-FR', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      });
+    },
   },
 };
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css?family=Montserrat');
-
-.testimonial-list {
-  width: 100%;
-  height: 100%;
-  margin: 0 auto;
-  padding: 20px;
-  box-sizing: border-box;
+.testimonial-parent {
+  position: relative;
+  height: 100vh;
 }
 
-h2 {
-  text-align: center;
-  margin-bottom: 20px;
+.testimonial-container {
+  position: relative;
+  height: 100%;
 }
 
 .testimonial-box {
-  position: relative;
-  width: fit-content;
-  height: fit-content;
-  padding: 20px;
-  margin: 0 auto;
+  width: 80%;
+  margin-bottom: 20px;
+  transform: translateY(0);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.testimonial {
-  display: grid;
-  grid-template-rows: 1fr 1fr;
-  background-image: linear-gradient(120deg, #e0e0e0 0%, #c0c0c0 100%);
-  padding: 10px 20px;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
-  border-radius: 10px;
-  height: 80%; 
-  width: 100%;
-  margin-bottom: 20px; 
-  box-sizing: border-box;
-
+.testimonial-box:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
 }
 
-.fas {
-  position: absolute;
-  top: 0;
-  right: 0;
-  padding: 10px;
-  font-size: 25px;
-  color: #222;
+.notification {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 16px;
+  margin: 10px;
+  background-color: rgba(177, 177, 177, 0.5);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.testimonial-text {
-  font-size: 14px; 
-  line-height: 22px; 
-  text-align: start;
-  padding: 20px 15px; 
-  width: 100%;
-  color: #000; 
-}
-
-.testimonial-user {
+.notification-header {
   display: flex;
-  align-items: start;
-  justify-content: start;
+  align-items: center;
 }
 
-.user-img {
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-  width: 50px; /* Reduced width */
-  height: 50px; /* Reduced height */
+.user-image {
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
+  margin-right: 10px;
 }
 
 .user-info {
-  margin: 0 20px;
-  display: grid;
-  grid-template-rows: 1fr 1fr;
-  text-align: end;
+  flex-grow: 1;
 }
 
 .user-name {
-  font-weight: 800;
-  color: #000; /* Changed text color to black */
+  font-size: 16px;
+  font-weight: bold;
+  text-align: left;
 }
 
-.user-job-details {
-  margin: 5px 0 0 0;
-  position: relative;
-  display: flex;
-  justify-content: center;
+.message-date {
+  font-size: 12px;
+  color: #888888;
+  text-align: left;
 }
 
-.controls {
-  text-align: center;
-  margin-top: 20px;
+.message-content {
+  margin-top: 8px;
+  text-align: left;
 }
 
-.controls button {
-  padding: 10px 20px;
-  border: none;
-  background-color: #000; /* Changed button background color to black */
-  color: white;
-  margin: 0 10px;
-  cursor: pointer;
-  border-radius: 5px;
-}
-
-.controls button:hover {
-  background-color: #444; /* Changed hover color to a darker shade of black */
-}
-
-.loading {
-  text-align: center;
-  font-size: 18px;
-  color: #666;
-}
-
-.error {
-  text-align: center;
-  color: red;
-}
-
-.support {
-  position: absolute;
-  right: 10px;
-  bottom: 10px;
-  padding: 10px;
-  display: flex;
-}
-
-.support a {
-  margin: 0 10px;
-  color: #fff;
-  font-size: 1.5rem;
-  transition: all 400ms ease;
-}
-
-.support a:hover {
-  color: #000; /* Changed hover color to black */
-}
-
-/* Slide fade transition */
-.slide-fade-enter-active, .slide-fade-leave-active {
+.fade-enter-active,
+.fade-leave-active {
   transition: opacity 0.5s;
 }
-.slide-fade-enter, .slide-fade-leave-to /* .slide-fade-leave-active in <2.1.8 */ {
+
+.fade-enter,
+.fade-leave-to {
   opacity: 0;
 }
 </style>

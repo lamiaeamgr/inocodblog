@@ -1,6 +1,6 @@
 <template>
   <section class="partners">
-    <h2>Our Partners</h2>
+
     <div v-if="partners.length > 0" class="partners-list">
       <div v-for="partner in partners" :key="partner.id" class="partner-item">
         <a :href="partner.site_web" target="_blank" rel="noopener noreferrer">
@@ -43,7 +43,6 @@ export default {
 <style scoped>
 .partners {
   padding: 20px;
-  background-color: #f9f9f9;
 }
 
 h2 {

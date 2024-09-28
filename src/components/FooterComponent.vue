@@ -13,7 +13,7 @@ export default {};
 
 <style scoped>
 .footer {
-  background-color: #151717;
+  background-color: rgba(0, 0, 0, 0.9); /* Semi-transparent black background */
   color: white;
   text-align: center;
   padding: 20px;
@@ -21,9 +21,11 @@ export default {};
   bottom: 0;
   left: 0;
   width: 100%;
-  margin:20px 0 0 0;
   box-sizing: border-box;
+  backdrop-filter: blur(50px); /* Blur effect on the background */
 }
+
+
 
 .footer-content {
   display: flex;

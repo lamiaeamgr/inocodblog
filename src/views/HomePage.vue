@@ -1,25 +1,22 @@
 <template>
   <div class="HomePage">
-    <header>
-      <div>
-        <h1>Welcome to Our Blog</h1>
-        <p>Discover the latest articles and stay updated with our blog.</p>
-      </div>
-    </header>
-
-    <section class="recent-articles">
+    <HeroSection />
+    <section class="recent-articles" ref="recentArticles">
       <!-- Conditional rendering of ArticlesList -->
-      <ArticlesList v-if="articles.length > 0"/>
+      <h2>Recent Articles</h2>
+      <ArticlesList v-if="articles.length > 0" />
       <p v-else>Loading articles...</p>
     </section>
 
-    <section class="testimonials">
+    <section class="testimonials" ref="testimonialsSection">
       <!-- Conditional rendering of TestimonialsList -->
-      <TestimonialsList v-if="testimonials.length > 0"/>
+      <h2>Testimonials</h2>
+      <TestimonialsList v-if="testimonials.length > 0" />
       <p v-else>Loading testimonials...</p>
     </section>
 
     <section class="partners">
+      <h2>Our Partners</h2> <!-- Added h2 for partners -->
       <!-- Rendering PartnersList -->
       <PartnersList />
     </section>
@@ -27,21 +24,27 @@
 </template>
 
 <script>
-import ArticlesList from './ArticlesList.vue'; 
-import TestimonialsList from './TestimonialsList.vue'; 
-import PartnersList from './PartnersList.vue'; // Import the PartnersList component
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import HeroSection from './HeroSection.vue';
+import ArticlesList from './ArticlesList.vue';
+import TestimonialsList from './TestimonialsList.vue';
+import PartnersList from './PartnersList.vue';
+
+gsap.registerPlugin(ScrollTrigger);
 
 export default {
   name: 'HomePage',
   components: {
+    HeroSection,
     ArticlesList,
     TestimonialsList,
-    PartnersList // Register the PartnersList component
+    PartnersList,
   },
   data() {
     return {
       articles: [],
-      testimonials: []
+      testimonials: [],
     };
   },
   created() {
@@ -56,16 +59,16 @@ export default {
           throw new Error('Network response was not ok');
         }
         const data = await response.json();
-        console.log('Fetched articles:', data); 
-        this.articles = data.slice(0, 3); 
-        console.log('Limited articles:', this.articles); 
+        console.log('Fetched articles:', data);
+        this.articles = data.slice(0, 3);
+        console.log('Limited articles:', this.articles);
       } catch (error) {
         console.error('Error fetching articles:', error);
       }
     },
     async fetchTestimonials() {
       try {
-        const response = await fetch('http://localhost:3000/api/temoignages'); 
+        const response = await fetch('http://localhost:3000/api/temoignages');
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
@@ -75,48 +78,51 @@ export default {
         console.error('Error fetching testimonials:', error);
         // Handle error (e.g., display a message to the user)
       }
-    }
-  }
+    },
+    animateOnScroll() {
+      // Animate the recent articles section
+      gsap.from(this.$refs.recentArticles.children, {
+        y: 50,
+        opacity: 0,
+        duration: 3,
+        stagger: 0.2, // Stagger effect for articles
+        scrollTrigger: {
+          trigger: this.$refs.recentArticles,
+          start: 'top 75%',
+          toggleActions: 'play none none reverse',
+        },
+      });
+
+      // Animate testimonials section
+      gsap.from(this.$refs.testimonialsSection.children, {
+        y: 50,
+        opacity: 0,
+        duration: 3,
+        stagger: 0.2, // Stagger effect for testimonials
+        scrollTrigger: {
+          trigger: this.$refs.testimonialsSection,
+          start: 'top 75%',
+          toggleActions: 'play none none reverse',
+        },
+      });
+    },
+  },
+  mounted() {
+    this.animateOnScroll(); // Call the animation function on mounted
+  },
 };
 </script>
 
 <style scoped>
-.HomePage {
-  padding: 20px;
-  background-color: white;
-}
-
-header {
-  text-align: center;
-  color: white;
-  font-size: 1.5em;
-  margin-bottom: 20px;
-  height: 80vh;
-  background-image: url('~@/assets/Hero.jpg'); /* Corrected path */
-  background-size: cover;
-  background-position: center;
-}
-
-header > div {
-  height: 100%;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  background-color: rgba(0, 0, 0, 0.6);
-}
-
-.recent-articles {
-  margin-top: 20px;
-}
-
-.testimonials {
-  margin-top: 20px;
-}
-
+.recent-articles,
+.testimonials,
 .partners {
   margin-top: 20px;
+}
+
+h2 {
+  font-size: 2.5rem; /* Adjust this value for bigger size */
+  color: white; /* Set text color to white */
 }
 
 .articles-list {

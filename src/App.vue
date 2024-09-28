@@ -21,12 +21,9 @@ export default {
 </script>
 
 <style>
-/* Global styles can go here */
 #app {
   text-align: center;
-  margin-top: 15px;
-  font-family: "Bebas Neue", cursive;
-  margin: 15px 0 0 0;
+  font-family: 'Poppins', sans-serif;
 }
 </style>
 

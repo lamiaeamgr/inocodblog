@@ -58,8 +58,6 @@ export default {
 };
 </script>
 
-
-
 <style scoped>
 /* General styles */
 .navbar {
@@ -67,10 +65,14 @@ export default {
   justify-content: space-between;
   align-items: center;
   padding: 15px 20px;
-  background-color: #fff;
-  border-bottom: 1px solid #eaeaea;
+  background-color:rgb(75 71 71 / 50%); /* Transparent white background */
+  backdrop-filter: blur(8px); /* Blurry background */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3); /* Semi-transparent border */
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
   margin-bottom: 15px;
+  position: sticky; /* Make the navbar sticky */
+  top: 0; /* Stick to the top */
+  z-index: 1000; /* Ensure it is above other elements */
 }
 
 .navbar-logo img {
@@ -89,7 +91,7 @@ export default {
 
 .navbar-menu a {
   text-decoration: none;
-  color: #333;
+  color: white; /* Change text color to white */
   font-weight: 600;
   font-size: 16px;
 }
@@ -101,32 +103,32 @@ export default {
 
 .navbar-actions .btn {
   padding: 10px 20px;
-  border: 1.5px solid black;
+  border: 1.5px solid white; /* Change border color to white */
   border-radius: 20px;
-  background-color: white;
-  color: #000;
+  background-color: rgba(255, 255, 255, 0.2); /* Semi-transparent background */
+  color: white; /* Change text color to white */
   text-decoration: none;
   font-weight: 600;
 }
 
 .navbar-actions .btn-inverse {
   padding: 10px 20px;
-  border: 1.5px solid black;
+  border: 1.5px solid white; /* Change border color to white */
   border-radius: 20px;
-  background-color: black;
-  color: #fff;
+  background-color: black; /* Keep black background */
+  color: white; /* Keep text color as white */
   text-decoration: none;
   font-weight: 600;
 }
 
 .navbar-actions .btn:hover {
-  background-color: black;
-  color: #fff;
+  background-color: white; /* Change hover background color to white */
+  color: black; /* Change hover text color to black */
 }
 
 .navbar-actions .btn-inverse:hover {
-  background-color: white;
-  color: #000;
+  background-color: white; /* Change hover background color to white */
+  color: black; /* Change hover text color to black */
 }
 
 .menu-toggle {
@@ -138,7 +140,7 @@ export default {
 .menu-toggle span {
   width: 25px;
   height: 3px;
-  background-color: #333;
+  background-color: white; /* Change menu toggle color to white */
   margin-bottom: 4px;
   transition: all 0.3s;
 }
@@ -165,7 +167,7 @@ export default {
     top: 60px;
     left: 0;
     width: 100%;
-    background-color: white;
+    background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent white background */
     padding: 20px;
   }
 

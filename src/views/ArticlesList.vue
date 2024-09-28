@@ -1,15 +1,18 @@
 <template>
-<h2>Our Blogs</h2>
+  <h2>Our Blogs</h2>
   <section class="articles">
-  
-    <article v-for="article in articles" :key="article.id">
+    <article 
+      v-for="article in articles" 
+      :key="article.id" 
+      ref="articleCards"
+      class="article-card"
+    >
       <div class="article-wrapper">
         <figure>
-          <!-- Corrected image path -->
           <img :src="require(`@/assets/${article.image}`)" :alt="article.titre" />
         </figure>
         <div class="article-body">
-          <h2>{{ article.titre }}</h2>
+          <h2 class="title">{{ article.titre }}</h2>
           <p>{{ article.resume }}</p>
           <router-link :to="{ name: 'ArticleDetail', params: { id: article.id } }" class="read-more">
             Read more
@@ -24,8 +27,12 @@
   </section>
 </template>
 
-
 <script>
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { TextPlugin } from "gsap/TextPlugin";
+import { MotionPathPlugin } from "gsap/MotionPathPlugin";
+
 export default {
   name: 'ArticlesList',
   data() {
@@ -35,6 +42,10 @@ export default {
   },
   created() {
     this.fetchArticles();
+    gsap.registerPlugin(ScrollTrigger, TextPlugin, MotionPathPlugin);
+  },
+  mounted() {
+    this.animateOnScroll();
   },
   methods: {
     async fetchArticles() {
@@ -45,11 +56,50 @@ export default {
         }
         const data = await response.json();
         this.articles = data;
+
+        // Call the animateOnScroll method after articles are fetched
+        this.$nextTick(() => {
+          this.animateOnScroll();
+        });
       } catch (error) {
         console.error('Error fetching articles:', error);
       }
+    },
+    animateOnScroll() {
+      // Ensure this runs after articles are rendered
+      const articles = this.$refs.articleCards;
+
+      // Ensure articles are defined before attempting to iterate
+      if (articles) {
+        articles.forEach((card) => {
+          gsap.from(card, {
+            opacity: 0,
+            y: 50,
+            scrollTrigger: {
+              trigger: card,
+              start: "top 80%",
+              toggleActions: "play none none reverse",
+              stagger: 0.2,
+            },
+            duration: 1,
+          });
+
+          gsap.to(card.querySelector('.title'), {
+            scrollTrigger: {
+              trigger: card,
+              start: "top 80%",
+              toggleActions: "play none none reverse",
+            },
+            text: { value: `${card.querySelector('.title').innerText} ` }, // Animate text on scroll
+            duration: 1,
+          });
+        });
+      } else {
+        console.warn('No articles found for animation.');
+      }
     }
-  }
+}
+
 };
 </script>
 
@@ -64,7 +114,7 @@ export default {
 
 article {
   border-radius: 16px;
-  background: #fff;
+  background: #000; /* Black background */
   overflow: hidden;
   transition: all 0.4s ease-in-out;
   display: flex;
@@ -97,12 +147,11 @@ article img {
   flex: 1; /* Ensure the body takes available space */
 }
 
-h2 {
+.title {
   margin: 0 0 18px 0;
-  font-family: "Bebas Neue", cursive;
   font-size: 1.9rem;
   letter-spacing: 0.06em;
-  color: #000;
+  color: #fff; /* White text */
   transition: color 0.3s ease-out;
 }
 
@@ -129,8 +178,8 @@ article:hover img {
   transform: scale(1.05);
 }
 
-article:hover h2 {
-  color: #28666e;
+article:hover .title {
+  color: #28666e; /* Change title color on hover */
 }
 
 article:hover .icon {
@@ -147,5 +196,4 @@ article:hover .icon {
   white-space: nowrap; 
   width: 1px;
 }
-
 </style>
